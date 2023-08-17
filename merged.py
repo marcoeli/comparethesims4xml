@@ -1,18 +1,18 @@
 import os
 import xml.etree.ElementTree as ET
 
-# Definir as pastas de entrada e saída
+# Define inbox and outbox folders
 input_folder1 = 'D:\\DP_STBLEditor\\in'
 input_folder2 = 'D:\\DP_STBLEditor\\pt'
 output_folder = 'D:\\DP_STBLEditor'
 
-# Certifique-se de que a pasta de saída existe
+# Make sure the output folder exists
 os.makedirs(output_folder, exist_ok=True)
 
-# Obter a lista de arquivos na primeira pasta de entrada
+# Get the list of files in the first input folder
 files1 = os.listdir(input_folder1)
 
-# Percorrer todos os arquivos na primeira pasta de entrada
+# Browse all files in the first entry folder
 for filename in files1:
     if filename.endswith('.xml'):
         # Caminho completo para os arquivos de entrada e saída
@@ -20,7 +20,7 @@ for filename in files1:
         file2 = os.path.join(input_folder2, filename)
         output_file = os.path.join(output_folder, filename)
 
-        # Verificar se o arquivo correspondente existe na segunda pasta de entrada
+        # Check that the corresponding file exists in the second input folder
         if os.path.exists(file2):
             # Carregar os arquivos XML de entrada
             tree1 = ET.parse(file1)
@@ -28,19 +28,19 @@ for filename in files1:
             tree2 = ET.parse(file2)
             root2 = tree2.getroot()
 
-            # Coletar todos os InstanceIDs do segundo arquivo XML
+            # Collect all InstanceIDs from the second XML file
             instance_ids_file2 = [element.attrib['InstanceID'] for element in root2.findall('.//TextStringDefinition')]
 
-            # Criar a estrutura de saída
+            # Create the output structure
             output_root = ET.Element('StblData')
             text_string_defs = ET.SubElement(output_root, 'TextStringDefinitions')
 
-            # Percorrer todos os elementos TextStringDefinition do primeiro arquivo XML
+            # Browse all TextStringDefinition elements in the first XML file
             for element in root1.findall('.//TextStringDefinition'):
                 # Se o InstanceID do elemento atual não está no segundo arquivo, adicione-o ao text_string_defs
                 if element.attrib['InstanceID'] not in instance_ids_file2:
                     text_string_defs.append(element)
 
-            # Salvar o novo arquivo XML
+            # Save the new XML file
             output_tree = ET.ElementTree(output_root)
             output_tree.write(output_file, encoding='utf-8', xml_declaration=True)
